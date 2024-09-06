@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import userManager from './authService';
+import { loginCallback } from './authService';
 
 const Callback = () => {
     const navigate = useNavigate();
@@ -9,7 +9,7 @@ const Callback = () => {
         const handleCallback = async () => {
             try {
                 console.log('Handling login callback...');
-                await userManager.signinRedirectCallback();
+                await loginCallback();
                 console.log('Login callback processed successfully.');
                 navigate('/'); // 登录成功后重定向到首页
             } catch (error) {

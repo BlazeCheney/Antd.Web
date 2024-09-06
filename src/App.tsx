@@ -3,7 +3,7 @@ import './App.css';
 import { Button } from 'antd';
 import { User } from 'oidc-client';
 import { LoginOutlined, LogoutOutlined } from '@ant-design/icons';
-import userManager from './authService';
+import userManager, { checkSession, login, logout } from './authService';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Callback from './callback';
 
@@ -14,7 +14,7 @@ function App() {
     const loadUser = async () => {
       try {
         // 获取当前用户
-        const currentUser = await userManager.getUser();
+        const currentUser = await checkSession();
         setUser(currentUser);
       } catch (error) {
         console.error('Failed to get user:', error);
@@ -35,17 +35,17 @@ function App() {
     };
   }, []);
 
-  const login = async () => {
+  const handleLogin = async () => {
     try {
-      await userManager.signinRedirect();
+      await login();
     } catch (error) {
       console.error('Login failed:', error);
     }
   };
 
-  const logout = async () => {
+  const handleLogout = async () => {
     try {
-      await userManager.signoutRedirect();
+      await logout();
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -60,10 +60,11 @@ function App() {
               {user ? (
                 <>
                   <p>Welcome!</p>
-                  <Button icon={<LogoutOutlined />} onClick={logout}>Logout</Button>
+                  <p>用户名: {user?.profile?.name ?? "未知用户"}</p>
+                  <Button icon={<LogoutOutlined />} onClick={handleLogout}>Logout</Button>
                 </>
               ) : (
-                <Button type='primary' icon={<LoginOutlined />} onClick={login}>Login</Button>
+                <Button type='primary' icon={<LoginOutlined />} onClick={handleLogin}>Login</Button>
               )}
             </div>
             <h1>ORS React</h1>
